@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173",allowCredentials = "true")
 public class ProductController {
     @Autowired
     private JwtService jwtService;
@@ -142,5 +141,67 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(product,HttpStatus.OK);
+    }
+    @PutMapping("product/{id}")
+    public ResponseEntity<?> update(@PathVariable int id, @RequestHeader("Authorization") String authHeader,@RequestBody ProductRequest productRequest)
+    {
+        if(authHeader==null || !authHeader.startsWith("Bearer "))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token=authHeader.substring(7);
+        String email= jwtService.extractUserName(token);
+        if(!jwtService.validateToken(token, email))
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Product product=productService.updateProduct(productRequest, id);
+        if(product==null)
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(product,HttpStatus.OK);
+    }
+    @PutMapping("/productImages/{hotelId}/{id}")
+    public ResponseEntity<?> updateImages(@PathVariable int id,@PathVariable int hotelId,@RequestHeader("Authorization") String authHeader,@RequestPart(value = "destImage",required = false) MultipartFile banner, @RequestPart(value = "image1",required = false) MultipartFile image1,@RequestPart(value = "image2",required = false) MultipartFile image2,@RequestPart(value = "image3",required = false) MultipartFile image3,@RequestPart(value = "image4",required = false) MultipartFile image4) throws IOException {
+        if(authHeader==null || !authHeader.startsWith("Bearer "))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token=authHeader.substring(7);
+        String email= jwtService.extractUserName(token);
+        if(!jwtService.validateToken(token, email)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Hotel obj=hotelService.update(image1,image2,image3,image4,hotelId);
+        Product product=productService.updateBanner(id,banner);
+        if(obj==null)
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if(product==null)
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @DeleteMapping("product/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable int id,@RequestHeader("Authorization") String authHeader)
+    {
+        if(authHeader==null || !authHeader.startsWith("Bearer "))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token=authHeader.substring(7);
+        String email= jwtService.extractUserName(token);
+        if(!jwtService.validateToken(token, email)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        int status=productService.deleteProduct(id);
+        if(status!=0)
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

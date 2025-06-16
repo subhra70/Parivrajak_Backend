@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173",allowCredentials = "true")
 public class OrgController {
     @Autowired
     private OrgService service;
@@ -51,6 +50,11 @@ public class OrgController {
             if(userService.getUser(org.getEmail())==null)
             {
                 user=userService.saveUser(new User(org.getUsername(),org.getEmail(),org.getPassword()));
+            }
+            else{
+                user=userService.getUser(org.getEmail());
+                user.setPassword(org.getPassword());
+                userService.saveUser(user);
             }
             if(service.saveOrganizer(org)!=null || user!=null)
             {
@@ -208,11 +212,15 @@ public class OrgController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         organizer.setUsername(request.getUsername());
-        organizer.setEmail(request.getEmail());
         organizer.setPhone(request.getPhone());
         organizer.setLocation(request.getLocation());
         organizer.setOrganization(request.getOrganization());
-        service.saveOrganizer(organizer);
+        organizer.setEmail(email);
+        Organizer org=service.saveOrganizer(organizer);
+        if(org==null || !org.isStatus())
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

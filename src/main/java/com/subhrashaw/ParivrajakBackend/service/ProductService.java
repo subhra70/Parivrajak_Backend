@@ -46,6 +46,11 @@ public class ProductService {
         }
         return response;
     }
+    @Transactional
+    public Product getProductItem(int id)
+    {
+        return productRepo.findById(id).orElse(new Product(-1));
+    }
 
     @Transactional
     public List<Product> getAllProducts(double startPrice, double endPrice, int startDay, int endDay) {
@@ -94,4 +99,38 @@ public class ProductService {
         return response;
     }
 
+    public Product updateProduct(ProductRequest product, int id) {
+        Product prod=productRepo.findById(id).orElse(new Product(-1));
+        if(prod.getId()!=-1)
+        {
+            prod.setTitle(product.getPtitle());
+            prod.setDiscount(product.getDiscount());
+            prod.setPrice(product.getPrice());
+            prod.setPlace(product.getDestination());
+            prod.setDestType(product.getType());
+            prod.setMinDays(product.getMinDays());
+            prod.setMaxDays(product.getMaxDays());
+            return productRepo.save(prod);
+        }
+        return prod;
+    }
+
+    public Product updateBanner(int id,MultipartFile banner) throws IOException {
+        Product product=productRepo.findById(id).orElse(null);
+        if(product!=null)
+        {
+            if(banner!=null) {
+                product.setDestImgName(banner.getOriginalFilename());
+                product.setDestImg(banner.getBytes());
+                product.setDestImgType(banner.getContentType());
+            }
+            return productRepo.save(product);
+        }
+        return product;
+    }
+
+    public int deleteProduct(int id) {
+        productRepo.deleteById(id);
+        return 0;
+    }
 }

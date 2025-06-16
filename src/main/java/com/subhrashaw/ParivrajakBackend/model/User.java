@@ -11,6 +11,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private boolean status=false;
     public User(String username,String email,String password)
     {
         this.username=username;
@@ -54,6 +55,14 @@ public class User {
         this.password = password;
     }
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -61,6 +70,7 @@ public class User {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", status=" + status +
                 '}';
     }
 }

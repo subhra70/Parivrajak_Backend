@@ -3,9 +3,11 @@ package com.subhrashaw.ParivrajakBackend.service;
 import com.subhrashaw.ParivrajakBackend.dao.PurchaseRepo;
 import com.subhrashaw.ParivrajakBackend.model.History;
 import com.subhrashaw.ParivrajakBackend.model.Product;
+import com.subhrashaw.ParivrajakBackend.model.ProductStatus;
 import com.subhrashaw.ParivrajakBackend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,43 +22,84 @@ public class PurchaseService {
         History history = repo.findByUserId(user).orElse(null);
 
         if (history == null) {
-            // Create new History if not found
             history = new History();
             history.setUserId(user);
-            history.setDestId(new ArrayList<>());
-            history.setPurchaseStatus(new ArrayList<>());
-            history.setSaveStatus(new ArrayList<>());
+            history.setProductStatuses(new ArrayList<>());
+
+            ProductStatus status = new ProductStatus();
+            status.setProduct(product);
+            status.setPurchased(false);
+            status.setSaved(true);
+
+            history.getProductStatuses().add(status);
+        } else {
+            boolean found = false;
+
+            for (ProductStatus status : history.getProductStatuses()) {
+                if (status.getProduct().getId() == product.getId()) {
+                    status.setSaved(true);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                ProductStatus status = new ProductStatus();
+                status.setProduct(product);
+                status.setPurchased(false);
+                status.setSaved(true);
+
+                history.getProductStatuses().add(status);
+            }
         }
 
-        history.getDestId().add(product);
-        history.getPurchaseStatus().add(false);  // or whatever logic you want
-        history.getSaveStatus().add(true);       // or whatever logic you want
-
-        // Save and return updated history
         return repo.save(history);
     }
 
     public History purchaseProduct(User user,Product product) {
         History history=repo.findByUserId(user).orElse(null);
-        if(history!=null)
+        int flag=0;
+        if(history==null)
         {
-            List<Product> products=history.getDestId();
-            List<Boolean> purchaseStatus=history.getPurchaseStatus();
-            int idx=-1;
-            for(int i=0;i< products.size();i++)
+            history=new History();
+            history.setUserId(user);
+            history.setProductStatuses(new ArrayList<>());
+            ProductStatus productStatus=new ProductStatus();
+            productStatus.setProduct(product);
+            productStatus.setSaved(false);
+            productStatus.setPurchased(true);
+            history.getProductStatuses().add(productStatus);
+        }
+        else{
+            boolean found=false;
+            for(ProductStatus status: history.getProductStatuses())
             {
-                if(products.get(i).getId()== product.getId())
+                if(status.getProduct()==product)
                 {
-                    idx=i;
+                    found=true;
+                    status.setPurchased(true);
                     break;
                 }
             }
-            purchaseStatus.set(idx,true);
+            if(!found)
+            {
+                ProductStatus productStatus=new ProductStatus();
+                productStatus.setProduct(product);
+                productStatus.setSaved(false);
+                productStatus.setPurchased(true);
+                history.getProductStatuses().add(productStatus);
+            }
         }
-        return history;
+        return repo.save(history);
     }
 
-//    public List<Product> getAllProductId(User user) {
-//        return repo.
-//    }
+    @Transactional
+    public List<Product> getAllSavedProduct(User user) {
+        return repo.getAllSavedProduct(user);
+    }
+
+    @Transactional
+    public List<Product> getAllPurchasedProduct(User user) {
+        return repo.getAllPurchasedProduct(user);
+    }
 }

@@ -1,0 +1,19 @@
+# Ignore build and target folders
+/build/
+/target/
+
+# Ignore environment and secret config
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties
+
+# IDE folders
+.idea/
+.vscode/
+*.iml
+
+# Logs
+*.log
+
+# OS-generated files
+.DS_Store
+Thumbs.db

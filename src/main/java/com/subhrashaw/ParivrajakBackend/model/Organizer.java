@@ -14,7 +14,7 @@ public class Organizer {
     private String email;
     private String password;
     private String location;
-    private boolean status;
+    private boolean status=false;
 
     public int getId() {
         return id;

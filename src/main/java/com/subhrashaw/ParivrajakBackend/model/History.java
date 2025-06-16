@@ -11,23 +11,13 @@ public class History {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToMany
-    @JoinTable(
-            name = "history_products",
-            joinColumns = @JoinColumn(name = "history_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> destId;
-
     @OneToOne
     @JoinColumn(name = "user_id")
     private User userId;
 
     @ElementCollection
-    private List<Boolean> purchaseStatus;
-
-    @ElementCollection
-    private List<Boolean> saveStatus;
+    @CollectionTable(name = "history_product_status", joinColumns = @JoinColumn(name = "history_id"))
+    private List<ProductStatus> productStatuses;
 
     public int getId() {
         return id;
@@ -35,14 +25,6 @@ public class History {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public List<Product> getDestId() {
-        return destId;
-    }
-
-    public void setDestId(List<Product> destId) {
-        this.destId = destId;
     }
 
     public User getUserId() {
@@ -53,19 +35,11 @@ public class History {
         this.userId = userId;
     }
 
-    public List<Boolean> getPurchaseStatus() {
-        return purchaseStatus;
+    public List<ProductStatus> getProductStatuses() {
+        return productStatuses;
     }
 
-    public void setPurchaseStatus(List<Boolean> purchaseStatus) {
-        this.purchaseStatus = purchaseStatus;
-    }
-
-    public List<Boolean> getSaveStatus() {
-        return saveStatus;
-    }
-
-    public void setSaveStatus(List<Boolean> saveStatus) {
-        this.saveStatus = saveStatus;
+    public void setProductStatuses(List<ProductStatus> productStatuses) {
+        this.productStatuses = productStatuses;
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,20 +77,47 @@ public class PurchaseController {
         return new ResponseEntity<>(history,HttpStatus.OK);
     }
 
-//    @GetMapping("savedProduct")
-//    public ResponseEntity<?> getSavedProducts(@RequestHeader("Authorization") String authHeader)
-//    {
-//        if (authHeader==null || !authHeader.startsWith("Bearer "))
-//        {
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
-//        String token=authHeader.substring(7);
-//        String email=jwtService.extractUserName(token);
-//        if(!jwtService.validateToken(token, email))
-//        {
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
-//        User user=userService.getUser(email);
-//        List<Product> productId=purchaseService.getAllProductId(user);
-//    }
+    @GetMapping("savedProduct")
+    public ResponseEntity<?> getSavedProducts(@RequestHeader("Authorization") String authHeader)
+    {
+        if (authHeader==null || !authHeader.startsWith("Bearer "))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token=authHeader.substring(7);
+        String email=jwtService.extractUserName(token);
+        if(!jwtService.validateToken(token, email))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user=userService.getUser(email);
+        List<Product> product=purchaseService.getAllSavedProduct(user);
+        if(product.size()==0)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(product,HttpStatus.OK);
+    }
+    @GetMapping("purchasedProduct")
+    public ResponseEntity<?> getPurchasedProducts(@RequestHeader("Authorization") String authHeader)
+    {
+        if (authHeader==null || !authHeader.startsWith("Bearer "))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token=authHeader.substring(7);
+        String email=jwtService.extractUserName(token);
+        if(!jwtService.validateToken(token, email))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user=userService.getUser(email);
+        List<Product> product=purchaseService.getAllPurchasedProduct(user);
+        if(product.size()==0)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        System.out.println("Done");
+        return new ResponseEntity<>(product,HttpStatus.OK);
+    }
 }

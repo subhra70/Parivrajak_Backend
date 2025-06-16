@@ -1,6 +1,7 @@
 package com.subhrashaw.ParivrajakBackend.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,9 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
     @Bean
     public AuthenticationProvider authenticationProvider()
     {
@@ -49,7 +53,7 @@ public class SecurityConfig {
         http.cors(cors->cors.configurationSource(corsConfigurationSource()))
         .csrf(customizer -> customizer.disable())
             .authorizeHttpRequests(request->request
-                    .requestMatchers("/registerUser","/loginUser","registerOrganizer","orgLogin","/productsFilter","bannerImage/**").permitAll()
+                    .requestMatchers("/registerUser","/loginUser","registerOrganizer","orgLogin","/productsFilter","bannerImage/**","/sendOtp","/verifyOtp","/sendMail").permitAll()
                     .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -88,7 +92,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173"));   // Vite / React dev server
+        config.setAllowedOrigins(List.of(frontendUrl));   // Vite / React dev server
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));                       // or list the exact headers you need
         config.setAllowCredentials(true);                             // if you send cookies / auth headers
