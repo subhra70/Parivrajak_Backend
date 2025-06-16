@@ -4,14 +4,16 @@
 *.iml
 
 # Build and output directories
-/target/
-/build/
+target/
+build/
 
 # Logs
 *.log
 
+# Compiled JARs
+*.jar
 
-# Spring config
+# Spring Boot config (don't expose secrets)
 src/main/resources/application-dev.properties
 src/main/resources/application-prod.properties
 
