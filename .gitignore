@@ -1,19 +1,20 @@
-# Ignore build and target folders
-/build/
-/target/
-
-# Ignore environment and secret config
-src/main/resources/application-dev.properties
-src/main/resources/application-prod.properties
-
 # IDE folders
 .idea/
 .vscode/
 *.iml
 
+# Build and output directories
+/target/
+/build/
+
 # Logs
 *.log
 
-# OS-generated files
+
+# Spring config
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties
+
+# OS-specific files
 .DS_Store
 Thumbs.db
