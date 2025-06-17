@@ -49,7 +49,7 @@ public class OrgController {
             User user=null;
             if(userService.getUser(org.getEmail())==null)
             {
-                user=userService.saveUser(new User(org.getUsername(),org.getEmail(),org.getPassword()));
+                user=userService.saveUser(new User(org.getUsername(),org.getEmail(),org.getPassword(),true));
             }
             else{
                 user=userService.getUser(org.getEmail());
