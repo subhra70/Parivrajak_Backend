@@ -120,4 +120,50 @@ public class PurchaseController {
         System.out.println("Done");
         return new ResponseEntity<>(product,HttpStatus.OK);
     }
+    @DeleteMapping("deleteSavedProduct/{id}")
+    public ResponseEntity<HttpStatus> deleteSavedProduct(@PathVariable int id,@RequestHeader("Authorization") String authHeader)
+    {
+        if(authHeader==null || !authHeader.startsWith("Bearer "))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token=authHeader.substring(7);
+        String email= jwtService.extractUserName(token);
+        if(!jwtService.validateToken(token, email)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        System.out.println("Method called");
+        User user=userService.getUser(email);
+        Product product=productService.getProductItem(id);
+        int status=purchaseService.deleteSavedProduct(user,product);
+        if(status!=0)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        System.out.println("Completed");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @DeleteMapping("deletePurchasedProduct/{id}")
+    public ResponseEntity<HttpStatus> deletePurchasedProduct(@PathVariable int id,@RequestHeader("Authorization") String authHeader)
+    {
+        if(authHeader==null || !authHeader.startsWith("Bearer "))
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token=authHeader.substring(7);
+        String email= jwtService.extractUserName(token);
+        if(!jwtService.validateToken(token, email)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        System.out.println("Method called");
+        User user=userService.getUser(email);
+        Product product=productService.getProductItem(id);
+        int status=purchaseService.deletePurchasedProduct(user,product);
+        if(status!=0)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        System.out.println("Completed");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

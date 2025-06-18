@@ -102,4 +102,38 @@ public class PurchaseService {
     public List<Product> getAllPurchasedProduct(User user) {
         return repo.getAllPurchasedProduct(user);
     }
+
+    public int deleteSavedProduct(User user, Product product) {
+        History history = repo.findByUserId(user).orElse(null);
+        if (history != null && product != null) {
+            List<ProductStatus> statuses = history.getProductStatuses();
+            for (int i = 0; i < statuses.size(); i++) {
+                ProductStatus ps = statuses.get(i);
+                if (ps.getProduct() != null && ps.getProduct().getId() == product.getId()) {
+                    ps.setSaved(false);
+                    break;
+                }
+            }
+            repo.save(history);
+        }
+        return 0;
+    }
+
+
+    public int deletePurchasedProduct(User user,Product product)
+    {
+        History history = repo.findByUserId(user).orElse(null);
+        if (history != null && product != null) {
+            List<ProductStatus> statuses = history.getProductStatuses();
+            for (int i = 0; i < statuses.size(); i++) {
+                ProductStatus ps = statuses.get(i);
+                if (ps.getProduct() != null && ps.getProduct().getId() == product.getId()) {
+                    ps.setPurchased(false);
+                    break;
+                }
+            }
+            repo.save(history);
+        }
+        return 0;
+    }
 }

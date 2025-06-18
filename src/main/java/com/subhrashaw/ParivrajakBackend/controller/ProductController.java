@@ -2,10 +2,7 @@ package com.subhrashaw.ParivrajakBackend.controller;
 
 import com.subhrashaw.ParivrajakBackend.DTO.ExploreDTO;
 import com.subhrashaw.ParivrajakBackend.model.*;
-import com.subhrashaw.ParivrajakBackend.service.HotelService;
-import com.subhrashaw.ParivrajakBackend.service.JwtService;
-import com.subhrashaw.ParivrajakBackend.service.OrgService;
-import com.subhrashaw.ParivrajakBackend.service.ProductService;
+import com.subhrashaw.ParivrajakBackend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +23,8 @@ public class ProductController {
     private OrgService orgService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private UserService userService;
     @PostMapping("product")
     public ResponseEntity<?> addProduct(@RequestPart("product") ProductRequest product,@RequestPart("destImg") MultipartFile banner, @RequestPart("imageFile1") MultipartFile image1,@RequestPart("imageFile2") MultipartFile image2,@RequestPart("imageFile3") MultipartFile image3,@RequestPart("imageFile4") MultipartFile image4,@RequestHeader("Authorization") String authHeader) throws IOException {
         if(authHeader==null || !authHeader.startsWith("Bearer "))

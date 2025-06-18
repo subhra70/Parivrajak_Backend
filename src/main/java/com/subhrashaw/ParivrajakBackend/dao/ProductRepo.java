@@ -3,6 +3,7 @@ package com.subhrashaw.ParivrajakBackend.dao;
 import com.subhrashaw.ParivrajakBackend.model.Product;
 import com.subhrashaw.ParivrajakBackend.model.ProductRequest;
 import com.subhrashaw.ParivrajakBackend.model.ProductResponse;
+import com.subhrashaw.ParivrajakBackend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,5 @@ public interface ProductRepo extends JpaRepository<Product,Integer> {
 
     @Query("SELECT p.destImg FROM Product p WHERE p.id = :id")
     byte[] getImageById(@Param("id") int id);
+
 }
