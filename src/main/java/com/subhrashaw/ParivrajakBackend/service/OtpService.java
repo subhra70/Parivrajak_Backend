@@ -29,8 +29,8 @@ public class OtpService {
         // Send email
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("Your OTP for Email Verification");
-        message.setText("Your OTP is: " + otp + ".");
+        message.setSubject("Verification Mail");
+        message.setText("Here is your OTP: " + otp + ". Use it to complete your verification.");
         mailSender.send(message);
     }
 

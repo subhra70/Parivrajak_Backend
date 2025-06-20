@@ -53,7 +53,7 @@ public class SecurityConfig {
         http.cors(cors->cors.configurationSource(corsConfigurationSource()))
         .csrf(customizer -> customizer.disable())
             .authorizeHttpRequests(request->request
-                    .requestMatchers("/registerUser","/loginUser","registerOrganizer","orgLogin","/productsFilter","bannerImage/**","/sendOtp","/verifyOtp","/sendMail").permitAll()
+                    .requestMatchers("/registerUser","/loginUser","registerOrganizer","orgLogin","/productsFilter","bannerImage/**","/sendOtp","/verifyOtp","/sendMail","resetPassword").permitAll()
                     .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

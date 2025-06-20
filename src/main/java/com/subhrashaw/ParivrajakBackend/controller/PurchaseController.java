@@ -1,61 +1,32 @@
 package com.subhrashaw.ParivrajakBackend.controller;
 
-import com.subhrashaw.ParivrajakBackend.DTO.HistoryDTO;
-import com.subhrashaw.ParivrajakBackend.model.History;
-import com.subhrashaw.ParivrajakBackend.model.Product;
-import com.subhrashaw.ParivrajakBackend.model.ProductDetailsResponse;
-import com.subhrashaw.ParivrajakBackend.model.User;
-import com.subhrashaw.ParivrajakBackend.service.JwtService;
-import com.subhrashaw.ParivrajakBackend.service.ProductService;
-import com.subhrashaw.ParivrajakBackend.service.PurchaseService;
-import com.subhrashaw.ParivrajakBackend.service.UserService;
+import com.subhrashaw.ParivrajakBackend.DTO.PurchaseDTO;
+import com.subhrashaw.ParivrajakBackend.model.*;
+import com.subhrashaw.ParivrajakBackend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
 public class PurchaseController {
     @Autowired
-    private PurchaseService service;
-    @Autowired
     private JwtService jwtService;
+    @Autowired
+    private OrgService orgService;
     @Autowired
     private UserService userService;
     @Autowired
     private PurchaseService purchaseService;
     @Autowired
     private ProductService productService;
-
-    @PostMapping("saveProduct")
-    public ResponseEntity<?> addProduct(@RequestBody HistoryDTO history, @RequestHeader("Authorization") String authHeader)
-    {
-        if (authHeader==null || !authHeader.startsWith("Bearer "))
-        {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        String token=authHeader.substring(7);
-        String email=jwtService.extractUserName(token);
-        if(!jwtService.validateToken(token, email))
-        {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        User user=userService.getUser(email);
-        Product product=productService.getProduct(history.getDestId()).orElse(null);
-        History history1=purchaseService.saveProduct(user,product);
-        if(history1==null)
-        {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        return new ResponseEntity<>(history1,HttpStatus.OK);
-    }
     @PostMapping("purchase")
-    public ResponseEntity<?> purchaseProduct(@RequestBody HistoryDTO historyDTO,@RequestHeader("Authorization") String authHeader)
+    public ResponseEntity<?> purchaseProduct(@RequestBody PurchaseDTO purchaseDTO, @RequestHeader("Authorization") String authHeader)
     {
         if (authHeader==null || !authHeader.startsWith("Bearer "))
         {
@@ -67,18 +38,30 @@ public class PurchaseController {
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        Organizer organizer= orgService.getOrganizer(purchaseDTO.getOrgId());
         User user=userService.getUser(email);
-        Product product=productService.getProduct(historyDTO.getDestId()).orElse(null);
-        History history=purchaseService.purchaseProduct(user,product);
-        if(history==null)
+        Product product=productService.getProductItem(purchaseDTO.getDestId());
+        if(organizer.getId()==-1)
         {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(history,HttpStatus.OK);
+        if(user==null)
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        String dateStr= purchaseDTO.getDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate localDate=LocalDate.parse(dateStr,formatter);
+        int status=purchaseService.saveProduct(organizer,localDate,purchaseDTO,user,product);
+        if(status==0)
+        {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping("savedProduct")
-    public ResponseEntity<?> getSavedProducts(@RequestHeader("Authorization") String authHeader)
+    @GetMapping("historyProduct/{orgId}")
+    public ResponseEntity<?> listHistory(@PathVariable int orgId,@RequestHeader("Authorization") String authHeader)
     {
         if (authHeader==null || !authHeader.startsWith("Bearer "))
         {
@@ -90,80 +73,14 @@ public class PurchaseController {
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        User user=userService.getUser(email);
-        List<Product> product=purchaseService.getAllSavedProduct(user);
-        if(product.size()==0)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(product,HttpStatus.OK);
-    }
-    @GetMapping("purchasedProduct")
-    public ResponseEntity<?> getPurchasedProducts(@RequestHeader("Authorization") String authHeader)
-    {
-        if (authHeader==null || !authHeader.startsWith("Bearer "))
-        {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        String token=authHeader.substring(7);
-        String email=jwtService.extractUserName(token);
-        if(!jwtService.validateToken(token, email))
-        {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        User user=userService.getUser(email);
-        List<Product> product=purchaseService.getAllPurchasedProduct(user);
-        if(product.size()==0)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        System.out.println("Done");
-        return new ResponseEntity<>(product,HttpStatus.OK);
-    }
-    @DeleteMapping("deleteSavedProduct/{id}")
-    public ResponseEntity<HttpStatus> deleteSavedProduct(@PathVariable int id,@RequestHeader("Authorization") String authHeader)
-    {
-        if(authHeader==null || !authHeader.startsWith("Bearer "))
-        {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        String token=authHeader.substring(7);
-        String email= jwtService.extractUserName(token);
-        if(!jwtService.validateToken(token, email)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Organizer organizer=orgService.getOrganizer(orgId);
         System.out.println("Method called");
-        User user=userService.getUser(email);
-        Product product=productService.getProductItem(id);
-        int status=purchaseService.deleteSavedProduct(user,product);
-        if(status!=0)
+        List<Purchase> purchaseList=purchaseService.getPurchaseList(organizer);
+        if (purchaseList.size()==0)
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        System.out.println("Completed");
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    @DeleteMapping("deletePurchasedProduct/{id}")
-    public ResponseEntity<HttpStatus> deletePurchasedProduct(@PathVariable int id,@RequestHeader("Authorization") String authHeader)
-    {
-        if(authHeader==null || !authHeader.startsWith("Bearer "))
-        {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        String token=authHeader.substring(7);
-        String email= jwtService.extractUserName(token);
-        if(!jwtService.validateToken(token, email)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        System.out.println("Method called");
-        User user=userService.getUser(email);
-        Product product=productService.getProductItem(id);
-        int status=purchaseService.deletePurchasedProduct(user,product);
-        if(status!=0)
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        System.out.println("Completed");
-        return new ResponseEntity<>(HttpStatus.OK);
+        System.out.println("Method executed");
+        return new ResponseEntity(purchaseList,HttpStatus.OK);
     }
 }

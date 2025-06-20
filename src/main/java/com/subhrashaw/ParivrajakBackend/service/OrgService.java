@@ -24,8 +24,8 @@ public class OrgService {
         return orgRepo.findIdByEmail(email);
     }
 
-    public Optional<Organizer> getOrganizer(int orgId) {
-        return orgRepo.findById(orgId);
+    public Organizer getOrganizer(int orgId) {
+        return orgRepo.findById(orgId).orElse(new Organizer(-1));
     }
 
     public void deleteAccount(String email) {

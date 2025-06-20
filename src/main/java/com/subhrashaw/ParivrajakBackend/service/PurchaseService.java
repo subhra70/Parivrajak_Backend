@@ -1,139 +1,38 @@
 package com.subhrashaw.ParivrajakBackend.service;
 
+import com.subhrashaw.ParivrajakBackend.DTO.PurchaseDTO;
 import com.subhrashaw.ParivrajakBackend.dao.PurchaseRepo;
-import com.subhrashaw.ParivrajakBackend.model.History;
+import com.subhrashaw.ParivrajakBackend.model.Organizer;
 import com.subhrashaw.ParivrajakBackend.model.Product;
-import com.subhrashaw.ParivrajakBackend.model.ProductStatus;
+import com.subhrashaw.ParivrajakBackend.model.Purchase;
 import com.subhrashaw.ParivrajakBackend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PurchaseService {
-
     @Autowired
-    private PurchaseRepo repo;
+    private PurchaseRepo purchaseRepo;
+    @Autowired
+    private HistoryService historyService;
 
-    public History saveProduct(User user, Product product) {
-        History history = repo.findByUserId(user).orElse(null);
-
-        if (history == null) {
-            history = new History();
-            history.setUserId(user);
-            history.setProductStatuses(new ArrayList<>());
-
-            ProductStatus status = new ProductStatus();
-            status.setProduct(product);
-            status.setPurchased(false);
-            status.setSaved(true);
-
-            history.getProductStatuses().add(status);
-        } else {
-            boolean found = false;
-
-            for (ProductStatus status : history.getProductStatuses()) {
-                if (status.getProduct().getId() == product.getId()) {
-                    status.setSaved(true);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                ProductStatus status = new ProductStatus();
-                status.setProduct(product);
-                status.setPurchased(false);
-                status.setSaved(true);
-
-                history.getProductStatuses().add(status);
-            }
-        }
-
-        return repo.save(history);
-    }
-
-    public History purchaseProduct(User user,Product product) {
-        History history=repo.findByUserId(user).orElse(null);
-        int flag=0;
-        if(history==null)
-        {
-            history=new History();
-            history.setUserId(user);
-            history.setProductStatuses(new ArrayList<>());
-            ProductStatus productStatus=new ProductStatus();
-            productStatus.setProduct(product);
-            productStatus.setSaved(false);
-            productStatus.setPurchased(true);
-            history.getProductStatuses().add(productStatus);
-        }
-        else{
-            boolean found=false;
-            for(ProductStatus status: history.getProductStatuses())
-            {
-                if(status.getProduct()==product)
-                {
-                    found=true;
-                    status.setPurchased(true);
-                    break;
-                }
-            }
-            if(!found)
-            {
-                ProductStatus productStatus=new ProductStatus();
-                productStatus.setProduct(product);
-                productStatus.setSaved(false);
-                productStatus.setPurchased(true);
-                history.getProductStatuses().add(productStatus);
-            }
-        }
-        return repo.save(history);
-    }
-
-    @Transactional
-    public List<Product> getAllSavedProduct(User user) {
-        return repo.getAllSavedProduct(user);
-    }
-
-    @Transactional
-    public List<Product> getAllPurchasedProduct(User user) {
-        return repo.getAllPurchasedProduct(user);
-    }
-
-    public int deleteSavedProduct(User user, Product product) {
-        History history = repo.findByUserId(user).orElse(null);
-        if (history != null && product != null) {
-            List<ProductStatus> statuses = history.getProductStatuses();
-            for (int i = 0; i < statuses.size(); i++) {
-                ProductStatus ps = statuses.get(i);
-                if (ps.getProduct() != null && ps.getProduct().getId() == product.getId()) {
-                    ps.setSaved(false);
-                    break;
-                }
-            }
-            repo.save(history);
-        }
+    public int saveProduct(Organizer organizer, LocalDate localDate, PurchaseDTO purchaseDTO, User user, Product product) {
+        Purchase purchase=new Purchase();
+        purchase.setOrgId(organizer);
+        purchase.setDate(localDate);
+        purchase.setAmount(purchaseDTO.getAmount());
+        purchase.setPlace(purchaseDTO.getPlace());
+        purchase.setUser(user);
+        purchaseRepo.save(purchase);
+        historyService.purchaseProduct(user,product);
         return 0;
     }
 
-
-    public int deletePurchasedProduct(User user,Product product)
-    {
-        History history = repo.findByUserId(user).orElse(null);
-        if (history != null && product != null) {
-            List<ProductStatus> statuses = history.getProductStatuses();
-            for (int i = 0; i < statuses.size(); i++) {
-                ProductStatus ps = statuses.get(i);
-                if (ps.getProduct() != null && ps.getProduct().getId() == product.getId()) {
-                    ps.setPurchased(false);
-                    break;
-                }
-            }
-            repo.save(history);
-        }
-        return 0;
+    public List<Purchase> getPurchaseList(Organizer orgId) {
+        return purchaseRepo.findAllByOrgId(orgId);
     }
 }

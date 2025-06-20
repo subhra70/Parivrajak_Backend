@@ -136,8 +136,8 @@ public class OrgController {
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Optional<Organizer> organizer= service.getOrganizer(orgId);
-        if(organizer.isEmpty())
+        Organizer organizer= service.getOrganizer(orgId);
+        if(organizer.getId()==-1)
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

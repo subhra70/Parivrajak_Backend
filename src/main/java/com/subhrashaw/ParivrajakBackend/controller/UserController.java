@@ -1,9 +1,12 @@
 package com.subhrashaw.ParivrajakBackend.controller;
 
 import com.subhrashaw.ParivrajakBackend.DTO.LoginResponse;
+import com.subhrashaw.ParivrajakBackend.DTO.PasswordDTO;
+import com.subhrashaw.ParivrajakBackend.model.Organizer;
 import com.subhrashaw.ParivrajakBackend.model.User;
 import com.subhrashaw.ParivrajakBackend.model.UserLoginRequest;
 import com.subhrashaw.ParivrajakBackend.service.JwtService;
+import com.subhrashaw.ParivrajakBackend.service.OrgService;
 import com.subhrashaw.ParivrajakBackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 public class UserController {
@@ -21,6 +27,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private PasswordEncoder encoder;
+    @Autowired
+    private OrgService orgService;
     @Autowired
     private AuthenticationManager manager;
     @Autowired
@@ -65,6 +73,27 @@ public class UserController {
             System.out.println("Unsuccessfull2");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PutMapping("resetPassword")
+    public ResponseEntity<?> resetPass(@RequestBody PasswordDTO passwordDTO)
+    {
+        User user=userService.getUser(passwordDTO.getEmail());
+        Organizer organizer=orgService.getOrganizer(passwordDTO.getEmail());
+        String password=encoder.encode(passwordDTO.getPassword());
+        Organizer temp1=null;
+        if(organizer!=null)
+        {
+            organizer.setPassword(password);
+            temp1=orgService.saveOrganizer(organizer);
+        }
+        user.setPassword(password);
+        User temp=userService.saveUser(user);
+        if(temp==null||(organizer!=null && temp1==null))
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

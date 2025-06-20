@@ -1,22 +1,15 @@
 package com.subhrashaw.ParivrajakBackend.dao;
 
-import com.subhrashaw.ParivrajakBackend.model.History;
-import com.subhrashaw.ParivrajakBackend.model.Product;
-import com.subhrashaw.ParivrajakBackend.model.User;
+import com.subhrashaw.ParivrajakBackend.model.Organizer;
+import com.subhrashaw.ParivrajakBackend.model.Purchase;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface PurchaseRepo extends JpaRepository<History, Integer> {
-    Optional<History> findByUserId(User user);
-
-    @Query("SELECT ps.product FROM History h JOIN h.productStatuses ps WHERE ps.saved = true AND h.userId = :userId")
-    List<Product> getAllSavedProduct(@Param("userId") User userId);
-
-    @Query("SELECT ps.product FROM History h JOIN h.productStatuses ps WHERE ps.purchased = true AND h.userId = :userId")
-    List<Product> getAllPurchasedProduct(@Param("userId") User userId);
-
+public interface PurchaseRepo extends JpaRepository<Purchase,Integer> {
+    @Query("SELECT p FROM Purchase p WHERE p.orgId= :orgId")
+    List<Purchase> findAllByOrgId(@Param("orgId") Organizer orgId);
 }

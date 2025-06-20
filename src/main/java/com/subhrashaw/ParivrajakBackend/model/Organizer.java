@@ -15,7 +15,14 @@ public class Organizer {
     private String password;
     private String location;
     private boolean status=false;
+    public Organizer(int id)
+    {
+        this.id=id;
+    }
+    public Organizer()
+    {
 
+    }
     public int getId() {
         return id;
     }
