@@ -1,25 +1,19 @@
-# IDE folders
-.idea/
-.vscode/
-*.iml
-
-# Build and output directories
+# Java
 target/
-build/
 
 # Logs
 *.log
 
-# Compiled JARs
-*.jar
-
-# Spring Boot config (don't expose secrets)
-*.properties
-
-# Environment variables
+# Environment & Secrets
 .env
-
+*.env
+*.properties
 
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.iml
