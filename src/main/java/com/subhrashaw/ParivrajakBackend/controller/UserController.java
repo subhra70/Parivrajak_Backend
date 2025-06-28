@@ -35,6 +35,11 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
+    @GetMapping("/")
+    public String home() {
+        return "Parivrajak Backend is running.";
+    }
+
     @PostMapping("/registerUser")
     public ResponseEntity<?> register(@RequestBody User user)
     {
