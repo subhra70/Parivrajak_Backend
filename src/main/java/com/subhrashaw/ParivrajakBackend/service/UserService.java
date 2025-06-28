@@ -15,6 +15,7 @@ public class UserService {
     private UserRepo userRepo;
 
     public User saveUser(User user) {
+        user.setUsername(user.getUsername().trim());
         return userRepo.save(user);
     }
     public User getUser(String email) {
