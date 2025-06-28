@@ -81,7 +81,7 @@ public class ProductController {
         return new ResponseEntity<>(productList,HttpStatus.OK);
     }
 
-    @GetMapping("/productsFilter") //
+    @GetMapping("/productsFilter") 
     public ResponseEntity<?> getAllProducts(
             @RequestParam double startPrice,
             @RequestParam double endPrice,
@@ -94,7 +94,7 @@ public class ProductController {
         }
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
-    @GetMapping("bannerImage/{id}")
+    @GetMapping("/bannerImage/{id}")
     public ResponseEntity<?> fetchBanner(@PathVariable int id)
     {
         System.out.println("Image banner methode called");

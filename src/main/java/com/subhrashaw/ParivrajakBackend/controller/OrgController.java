@@ -81,7 +81,7 @@ public class OrgController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("orgLogin")
+    @PostMapping("/orgLogin")
     public ResponseEntity<?> login(@RequestBody OrgLoginRequest loginRequest) {
         try {
             Authentication authentication = manager.authenticate(

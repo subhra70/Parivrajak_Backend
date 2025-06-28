@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("resetPassword")
+    @PutMapping("/resetPassword")
     public ResponseEntity<?> resetPass(@RequestBody PasswordDTO passwordDTO)
     {
         User user=userService.getUser(passwordDTO.getEmail());
