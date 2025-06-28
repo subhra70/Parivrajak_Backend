@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@CrossOrigin("https://parivrajak.vercel.app")
 public class OrgController {
     @Autowired
     private OrgService service;
@@ -36,7 +37,7 @@ public class OrgController {
     @Qualifier("MyOrganizationDetailedService")
     private UserDetailsService userDetailsService;
 
-    @PostMapping("registerOrganizer")
+    @PostMapping("/registerOrganizer")
     public ResponseEntity<?> register(@RequestBody Organizer org)
     {
         try {

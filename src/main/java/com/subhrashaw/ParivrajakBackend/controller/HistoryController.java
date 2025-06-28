@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("https://parivrajak.vercel.app")
 public class HistoryController {
     @Autowired
     private HistoryService service;

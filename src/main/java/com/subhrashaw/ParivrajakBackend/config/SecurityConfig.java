@@ -58,7 +58,7 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/registerUser", "/loginUser", "registerOrganizer", "orgLogin", "/productsFilter", "bannerImage/**", "/sendOtp", "/verifyOtp", "/sendMail", "resetPassword").permitAll()
+                        .requestMatchers("/registerUser", "/loginUser", "/registerOrganizer", "/orgLogin", "/productsFilter", "/bannerImage/**", "/sendOtp", "/verifyOtp", "/sendMail", "/resetPassword").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth -> oauth
                         .authorizationEndpoint(endpoint -> endpoint
@@ -158,11 +158,12 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("https://parivrajak.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+        System.out.println("CORS allowed origin: " + config.getAllowedOrigins());
         return source;
     }
 }
