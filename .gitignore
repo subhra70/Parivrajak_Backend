@@ -14,7 +14,6 @@ build/
 *.jar
 
 # Spring Boot config (don't expose secrets)
-src/main/resources/application-prod.properties
 *.properties
 
 # Environment variables
