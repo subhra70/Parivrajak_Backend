@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("https://parivrajak.vercel.app")
+//@CrossOrigin("https://parivrajak.vercel.app")
 public class PurchaseController {
     @Autowired
     private JwtService jwtService;

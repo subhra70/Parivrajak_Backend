@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@CrossOrigin("https://parivrajak.vercel.app")
+//@CrossOrigin("https://parivrajak.vercel.app")
 public class UserController {
     @Autowired
     private UserService userService;

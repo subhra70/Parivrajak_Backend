@@ -6,6 +6,7 @@ import com.subhrashaw.ParivrajakBackend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -20,6 +21,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private JwtService jwtService;
     @Autowired
     private UserService userService;
+    @Value("${frontend.url}")
+    private String frontendURL;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, IOException {
@@ -29,7 +32,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         String jwt = jwtService.generateToken(email);
         User user1=userService.getUser(email);
-        String redirectUrl = "https://parivrajak.vercel.app/login?token=" + jwt+"&username="+user1.getUsername();
+        String redirectUrl = frontendURL+"/login?token=" + jwt+"&username="+user1.getUsername();
 
         response.sendRedirect(redirectUrl);
     }

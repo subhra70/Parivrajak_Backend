@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@CrossOrigin("https://parivrajak.vercel.app")
+//@CrossOrigin("https://parivrajak.vercel.app")
 public class OrgController {
     @Autowired
     private OrgService service;

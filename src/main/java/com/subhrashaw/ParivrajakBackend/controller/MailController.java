@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin("https://parivrajak.vercel.app")
+//@CrossOrigin("https://parivrajak.vercel.app")
 public class MailController {
 
     @Autowired
