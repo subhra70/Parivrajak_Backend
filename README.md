@@ -5,7 +5,7 @@ Parivrajak
 Parivrajak is a travel guide platform that allows users to explore various travel packages posted by multiple tour organizers. The platform enables users to select packages based on preferences such as budget, accommodation type, and duration. It facilitates transparency and direct communication between users and organizers.
 
 ## Payment
-Payment is done directly to organizer not through the site. Because user may want to negotiate some changing in plan or some other reasons which may increase or decrease the Price.
+Payment is done directly to organizer not through the site. Because user may want to make some changes in plan or some other reasons which may increase or decrease the Price.
 
 ## 🚀 Features
 🌍 Explore a wide range of tour packages
