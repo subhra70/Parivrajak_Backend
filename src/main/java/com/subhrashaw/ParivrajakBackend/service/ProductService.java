@@ -16,6 +16,7 @@ import java.util.Optional;
 public class ProductService {
     @Autowired
     private ProductRepo productRepo;
+    List<Product> allProduct=new ArrayList<>();
 
     public Product addProduct(ProductRequest product, MultipartFile banner, Organizer organizer, Hotel hotel) throws IOException {
         List<String> types=product.getType();
@@ -33,12 +34,27 @@ public class ProductService {
         prod.setRatings(4);
         prod.setHotelId(hotel);
         prod.setOrgId(organizer);
-        return productRepo.save(prod);
+        Product product1= productRepo.save(prod);
+        refreshAllProducts();
+        return product1;
+    }
+
+    private void refreshAllProducts()
+    {
+        allProduct=productRepo.findAll();
     }
 
     @Transactional
     public List<ProductResponse> getProducts(int orgId) {
-        List<Product> product= productRepo.findAllByOrgId_Id(orgId);
+        List<Product> product= new ArrayList<>();
+        refreshAllProducts();
+        for(Product prod:allProduct)
+        {
+            if(prod.getOrgId().getId()==orgId)
+            {
+                product.add(prod);
+            }
+        }
         List<ProductResponse> response=new ArrayList<>();
         for(Product prod:product)
         {
@@ -56,17 +72,45 @@ public class ProductService {
     public List<Product> getAllProducts(double startPrice, double endPrice, int startDay, int endDay) {
         if(startPrice==0 && endPrice==0 && startDay==0 && endDay==0)
         {
-            return productRepo.findAll();
+            if(allProduct.isEmpty())
+            {
+                allProduct=productRepo.findAll();
+            }
+            return allProduct;
         }
         else if(startPrice==0 && endPrice==0 && startDay!=0 && endDay!=0)
         {
-            return productRepo.findByDate(startDay, endDay);
+            List<Product> filteredProduct=new ArrayList<>();
+            for(Product p:allProduct)
+            {
+                if((p.getMinDays()<=startDay && p.getMaxDays()>=startDay)||(p.getMinDays()<=endDay && p.getMaxDays()>=endDay))
+                {
+                    filteredProduct.add(p);
+                }
+            }
+            return filteredProduct;
         }
         else if(startPrice!=0 && endPrice!=0 && startDay==0 && endDay==0)
         {
-            return productRepo.findByPrice(startPrice, endPrice);
+            List<Product> filteredProduct=new ArrayList<>();
+            for(Product p:allProduct)
+            {
+                if(p.getPrice()>=startPrice && p.getPrice()<=endPrice)
+                {
+                    filteredProduct.add(p);
+                }
+            }
+            return filteredProduct;
         }
-        return productRepo.findByPriceDate(startPrice,endPrice,startDay,endDay);
+        List<Product> filteredProduct=new ArrayList<>();
+        for(Product p:allProduct)
+        {
+            if((p.getPrice()>=startPrice && p.getPrice()<=endPrice)&&(p.getMinDays()<=startDay && p.getMaxDays()>=startDay)||(p.getMinDays()<=endDay && p.getMaxDays()>=endDay))
+            {
+                filteredProduct.add(p);
+            }
+        }
+        return filteredProduct;
     }
 
     @Transactional
@@ -76,7 +120,14 @@ public class ProductService {
 
     public Optional<Product> getProduct(int id)
     {
-        return productRepo.findById(id);
+        for(Product p:allProduct)
+        {
+            if(p.getId()==id)
+            {
+                return Optional.of(p);
+            }
+        }
+        return Optional.empty();
     }
 
     public ProductDetailsResponse getProductById(int id) {
@@ -110,7 +161,9 @@ public class ProductService {
             prod.setDestType(product.getType());
             prod.setMinDays(product.getMinDays());
             prod.setMaxDays(product.getMaxDays());
-            return productRepo.save(prod);
+            Product product1= productRepo.save(prod);
+            refreshAllProducts();
+            return product1;
         }
         return prod;
     }
@@ -124,13 +177,16 @@ public class ProductService {
                 product.setDestImg(banner.getBytes());
                 product.setDestImgType(banner.getContentType());
             }
-            return productRepo.save(product);
+            Product product1= productRepo.save(product);
+            refreshAllProducts();
+            return product1;
         }
         return product;
     }
 
     public int deleteProduct(int id) {
         productRepo.deleteById(id);
+        refreshAllProducts();
         return 0;
     }
 
