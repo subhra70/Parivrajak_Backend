@@ -53,7 +53,7 @@ public class ProductController {
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(tempProduct,HttpStatus.CREATED);
     }
     @GetMapping("orgproducts")
     public ResponseEntity<?> postHistory(@RequestHeader("Authorization") String authHeader)
@@ -83,12 +83,8 @@ public class ProductController {
 
     @GetMapping("/productsFilter") 
     public ResponseEntity<?> getAllProducts(
-            @RequestParam double startPrice,
-            @RequestParam double endPrice,
-            @RequestParam int startDay,
-            @RequestParam int endDay
     ) {
-        List<Product> productList = productService.getAllProducts(startPrice, endPrice, startDay, endDay);
+        List<Product> productList = productService.getAllProducts();
         if (productList == null || productList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -140,11 +136,13 @@ public class ProductController {
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(product,HttpStatus.OK);
+        Optional<Product> updatedProduct=productService.getProduct(id);
+        return new ResponseEntity<>(updatedProduct,HttpStatus.OK);
     }
     @PutMapping("product/{id}")
     public ResponseEntity<?> update(@PathVariable int id, @RequestHeader("Authorization") String authHeader,@RequestBody ProductRequest productRequest)
     {
+        System.out.println("product edit called");
         if(authHeader==null || !authHeader.startsWith("Bearer "))
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -160,10 +158,12 @@ public class ProductController {
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        System.out.println("Product edit done");
         return new ResponseEntity<>(product,HttpStatus.OK);
     }
     @PutMapping("/productImages/{hotelId}/{id}")
     public ResponseEntity<?> updateImages(@PathVariable int id,@PathVariable int hotelId,@RequestHeader("Authorization") String authHeader,@RequestPart(value = "destImage",required = false) MultipartFile banner, @RequestPart(value = "image1",required = false) MultipartFile image1,@RequestPart(value = "image2",required = false) MultipartFile image2,@RequestPart(value = "image3",required = false) MultipartFile image3,@RequestPart(value = "image4",required = false) MultipartFile image4) throws IOException {
+        System.out.println("Method called for images");
         if(authHeader==null || !authHeader.startsWith("Bearer "))
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -183,11 +183,13 @@ public class ProductController {
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        System.out.println("Images method completed");
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("product/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable int id,@RequestHeader("Authorization") String authHeader)
     {
+        System.out.println("Method called");
         if(authHeader==null || !authHeader.startsWith("Bearer "))
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -202,6 +204,7 @@ public class ProductController {
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        System.out.println("Item deleted");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -69,48 +69,49 @@ public class ProductService {
     }
 
     @Transactional
-    public List<Product> getAllProducts(double startPrice, double endPrice, int startDay, int endDay) {
-        if(startPrice==0 && endPrice==0 && startDay==0 && endDay==0)
-        {
-            if(allProduct.isEmpty())
-            {
-                allProduct=productRepo.findAll();
-            }
-            return allProduct;
-        }
-        else if(startPrice==0 && endPrice==0 && startDay!=0 && endDay!=0)
-        {
-            List<Product> filteredProduct=new ArrayList<>();
-            for(Product p:allProduct)
-            {
-                if((p.getMinDays()<=startDay && p.getMaxDays()>=startDay)||(p.getMinDays()<=endDay && p.getMaxDays()>=endDay))
-                {
-                    filteredProduct.add(p);
-                }
-            }
-            return filteredProduct;
-        }
-        else if(startPrice!=0 && endPrice!=0 && startDay==0 && endDay==0)
-        {
-            List<Product> filteredProduct=new ArrayList<>();
-            for(Product p:allProduct)
-            {
-                if(p.getPrice()>=startPrice && p.getPrice()<=endPrice)
-                {
-                    filteredProduct.add(p);
-                }
-            }
-            return filteredProduct;
-        }
-        List<Product> filteredProduct=new ArrayList<>();
-        for(Product p:allProduct)
-        {
-            if((p.getPrice()>=startPrice && p.getPrice()<=endPrice)&&(p.getMinDays()<=startDay && p.getMaxDays()>=startDay)||(p.getMinDays()<=endDay && p.getMaxDays()>=endDay))
-            {
-                filteredProduct.add(p);
-            }
-        }
-        return filteredProduct;
+    public List<Product> getAllProducts() {
+//        if(startPrice==0 && endPrice==0 && startDay==0 && endDay==0)
+//        {
+//            if(allProduct.isEmpty())
+//            {
+//                allProduct=productRepo.findAll();
+//            }
+//            return allProduct;
+//        }
+//        else if(startPrice==0 && endPrice==0 && startDay!=0 && endDay!=0)
+//        {
+//            List<Product> filteredProduct=new ArrayList<>();
+//            for(Product p:allProduct)
+//            {
+//                if((p.getMinDays()<=startDay && p.getMaxDays()>=startDay)||(p.getMinDays()<=endDay && p.getMaxDays()>=endDay))
+//                {
+//                    filteredProduct.add(p);
+//                }
+//            }
+//            return filteredProduct;
+//        }
+//        else if(startPrice!=0 && endPrice!=0 && startDay==0 && endDay==0)
+//        {
+//            List<Product> filteredProduct=new ArrayList<>();
+//            for(Product p:allProduct)
+//            {
+//                if(p.getPrice()>=startPrice && p.getPrice()<=endPrice)
+//                {
+//                    filteredProduct.add(p);
+//                }
+//            }
+//            return filteredProduct;
+//        }
+//        List<Product> filteredProduct=new ArrayList<>();
+//        for(Product p:allProduct)
+//        {
+//            if((p.getPrice()>=startPrice && p.getPrice()<=endPrice)&&(p.getMinDays()<=startDay && p.getMaxDays()>=startDay)||(p.getMinDays()<=endDay && p.getMaxDays()>=endDay))
+//            {
+//                filteredProduct.add(p);
+//            }
+//        }
+//        return filteredProduct;
+        return productRepo.findAll();
     }
 
     @Transactional
