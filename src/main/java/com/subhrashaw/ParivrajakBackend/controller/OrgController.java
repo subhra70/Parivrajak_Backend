@@ -160,7 +160,6 @@ public class OrgController {
         }
         Hotel hotel = hotelService.findById(hotelId).orElse(null);
         if (hotel == null) return ResponseEntity.notFound().build();
-
         List<Map<String, String>> images = new ArrayList<>();
 
         if (hotel.getImgData1() != null) {
