@@ -119,16 +119,9 @@ public class ProductService {
         return productRepo.getImageById(id);
     }
 
-    public Optional<Product> getProduct(int id)
+    public Product getProduct(int id)
     {
-        for(Product p:allProduct)
-        {
-            if(p.getId()==id)
-            {
-                return Optional.of(p);
-            }
-        }
-        return Optional.empty();
+        return productRepo.findById(id).orElse(new Product(-1));
     }
 
     public ProductDetailsResponse getProductById(int id) {

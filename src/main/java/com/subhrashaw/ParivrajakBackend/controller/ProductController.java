@@ -119,8 +119,9 @@ public class ProductController {
 //    }
 
     @GetMapping("product/{id}")
-    public ResponseEntity<?> getProduct(@PathVariable int id, @RequestHeader("Authorization") String authHeader)
+    public ResponseEntity<Product> getProduct(@PathVariable int id, @RequestHeader("Authorization") String authHeader)
     {
+        System.out.println("Product fetch called");
         if(authHeader==null || !authHeader.startsWith("Bearer "))
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -131,13 +132,20 @@ public class ProductController {
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        ProductDetailsResponse product=productService.getProductById(id);
-        if(product==null)
+//        ProductDetailsResponse product=productService.getProductById(id);
+//        if(product==null)
+//        {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+        System.out.println("Getting product");
+        Product product=productService.getProduct(id);
+        if(product.getId()==-1)
         {
+            System.out.println("Not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Optional<Product> updatedProduct=productService.getProduct(id);
-        return new ResponseEntity<>(updatedProduct,HttpStatus.OK);
+        System.out.println("Returning product:"+product);
+        return new ResponseEntity<>(product,HttpStatus.OK);
     }
     @PutMapping("product/{id}")
     public ResponseEntity<?> update(@PathVariable int id, @RequestHeader("Authorization") String authHeader,@RequestBody ProductRequest productRequest)

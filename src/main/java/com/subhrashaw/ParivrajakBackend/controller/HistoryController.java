@@ -43,7 +43,7 @@ public class HistoryController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         User user=userService.getUser(email);
-        Product product=productService.getProduct(history.getDestId()).orElse(null);
+        Product product=productService.getProduct(history.getDestId());
         History history1=historyService.saveProduct(user,product);
         if(history1==null)
         {
