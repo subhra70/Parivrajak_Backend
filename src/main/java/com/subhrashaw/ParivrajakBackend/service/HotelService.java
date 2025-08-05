@@ -14,6 +14,7 @@ import java.util.Optional;
 public class HotelService {
     @Autowired
     private HotelRepo hotelRepo;
+    @Transactional
     public Hotel addHotel(MultipartFile image1, MultipartFile image2, MultipartFile image3, MultipartFile image4) throws IOException {
         Hotel hotelObj=new Hotel();
         hotelObj.setRatings(0);
@@ -21,7 +22,7 @@ public class HotelService {
         hotelObj.setImgData2(image2.getBytes());
         hotelObj.setImgData3(image3.getBytes());
         hotelObj.setImgData4(image4.getBytes());
-        hotelObj.setImgType1(image1.getOriginalFilename());
+        hotelObj.setImgName1(image1.getOriginalFilename());
         hotelObj.setImgName2(image2.getOriginalFilename());
         hotelObj.setImgName3(image3.getOriginalFilename());
         hotelObj.setImgName4(image4.getOriginalFilename());

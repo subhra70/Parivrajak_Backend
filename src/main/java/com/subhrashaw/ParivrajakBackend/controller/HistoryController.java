@@ -2,6 +2,7 @@ package com.subhrashaw.ParivrajakBackend.controller;
 
 import com.subhrashaw.ParivrajakBackend.DTO.HistoryDTO;
 import com.subhrashaw.ParivrajakBackend.model.History;
+import com.subhrashaw.ParivrajakBackend.model.Hotel;
 import com.subhrashaw.ParivrajakBackend.model.Product;
 import com.subhrashaw.ParivrajakBackend.model.User;
 import com.subhrashaw.ParivrajakBackend.service.JwtService;
@@ -32,6 +33,7 @@ public class HistoryController {
     @PostMapping("saveProduct")
     public ResponseEntity<?> addProduct(@RequestBody HistoryDTO history, @RequestHeader("Authorization") String authHeader)
     {
+        System.out.println("Method called");
         if (authHeader==null || !authHeader.startsWith("Bearer "))
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -40,6 +42,7 @@ public class HistoryController {
         String email=jwtService.extractUserName(token);
         if(!jwtService.validateToken(token, email))
         {
+            System.out.println("Method failed1");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         User user=userService.getUser(email);
@@ -47,8 +50,10 @@ public class HistoryController {
         History history1=historyService.saveProduct(user,product);
         if(history1==null)
         {
+            System.out.println("Method failed2");
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        System.out.println("Method successfull");
         return new ResponseEntity<>(history1,HttpStatus.OK);
     }
 //    @PostMapping("purchase")
@@ -132,7 +137,9 @@ public class HistoryController {
         System.out.println("Method called");
         User user=userService.getUser(email);
         Product product=productService.getProductItem(id);
+        Hotel hotel= product.getHotelId();
         int status=historyService.deleteSavedProduct(user,product);
+        historyService.deleteHotel(hotel);
         if(status!=0)
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

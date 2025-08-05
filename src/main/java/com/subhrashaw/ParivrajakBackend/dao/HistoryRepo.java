@@ -14,9 +14,9 @@ public interface HistoryRepo extends JpaRepository<History, Integer> {
     Optional<History> findByUserId(User user);
 
     @Query("SELECT ps.product FROM History h JOIN h.productStatuses ps WHERE ps.saved = true AND h.userId = :userId")
-    List<Product> getAllSavedProduct(@Param("userId") User userId);
+    List<Integer> getAllSavedProduct(@Param("userId") User userId);
 
     @Query("SELECT ps.product FROM History h JOIN h.productStatuses ps WHERE ps.purchased = true AND h.userId = :userId")
-    List<Product> getAllPurchasedProduct(@Param("userId") User userId);
+    List<Integer> getAllPurchasedProduct(@Param("userId") User userId);
 
 }

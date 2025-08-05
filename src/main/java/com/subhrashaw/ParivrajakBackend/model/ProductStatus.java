@@ -6,18 +6,16 @@ import jakarta.persistence.ManyToOne;
 
 @Embeddable
 public class ProductStatus {
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private int product;
 
     private boolean saved;
     private boolean purchased;
 
-    public Product getProduct() {
+    public int getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(int product) {
         this.product = product;
     }
 

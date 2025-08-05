@@ -38,6 +38,10 @@ public class ProductController {
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        if(image1.getSize()==0 || image2.getSize()==0 || image3.getSize()==0 || image4.getSize()==0)
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Hotel hotelObj=hotelService.addHotel(image1,image2,image3,image4);
         if(hotelObj==null)
         {
