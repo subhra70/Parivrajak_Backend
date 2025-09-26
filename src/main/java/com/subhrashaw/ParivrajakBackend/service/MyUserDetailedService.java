@@ -31,6 +31,4 @@ public class MyUserDetailedService implements UserDetailsService {
         System.out.println("Returning UserPrincipal");
         return new UserPrincipal(user);
     }
-
-
 }
